@@ -4,16 +4,29 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using Repetition.Interfaces;
 using Repetition.Models;
+using Repetition.Resources;
 
 namespace Repetition.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+		private ITimeProvider timeProvider;
+		private readonly IStringLocalizer _Localizer;
+		public HomeController(ITimeProvider _timeProvider, IStringLocalizerFactory factory)
+		{
+			timeProvider = _timeProvider;
+			_Localizer = factory.Create(typeof(SharedResources));
+		}
+
+		public IActionResult Index()
+		{
+			//följande rads viewbag åkallas i Views/Home/Index
+			ViewBag.Time = timeProvider.Now.ToString();
+			return View();
+		}
 
         public IActionResult About()
         {
